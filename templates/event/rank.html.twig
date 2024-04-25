@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Event Ranking Display
+{% endblock %}
+
+{% block body %}
+    <div class="main-container">
+        <h1>Live F1 Ranking</h1>
+        <div class="ranking-table">
+            <div class="ranking-row">
+                <div>[#11] Nom Prenom +temps</div>
+                <div>[#11] Nom Prenom +temps</div>
+                <div>[#11] Nom Prenom +temps</div>
+                <div>[#11] Nom Prenom +temps</div>
+                <div>[#11] Nom Prenom +temps</div>
+                <div>[#11] Nom Prenom +temps</div>
+                <div>[#11] Nom Prenom +temps</div>
+                <div>[#11] Nom Prenom +temps</div>
+                <div>[#11] Nom Prenom +temps</div>
+            </div>
+            {% for participant in event.participants %}
+                <div class="ranking-row">
+                    <div class="position">[#{{ loop.index }}] {{ participant.team }} {{ participant.name }} {{ participant.lastLapTime }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <style>
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .ranking-table {
+            text-align: center;
+            width: 100%;
+        }
+        .ranking-row {
+            margin-bottom: 10px;
+        }
+        .position {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,13 @@
+{# templates/events/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}List of Events{% endblock %}
+
+{% block body %}
+<h1>List of Events</h1>
+<ul>
+    {% for event in events %}
+        <li><a href="{{ path('events_show', {'id': event.id}) }}">{{ event.dateStart|date('Y-m-d H:i:s') }} - {{ event.sport.name }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Event Ranking Display
+{% endblock %}
+
+{% block body %}
+    <div class="main-container">
+        <h1 style="text-align: center;">Live Football Ranking</h1>
+        <div class="score-container" style="text-align: center; margin-top: 50px;">
+            <div class="score" style="font-size: 5em; padding: 20px 40px;">
+                {# {{ event.score }} #}
+                PSG 4 - 1 FCB
+            </div>
+        </div>
+    </div>
+    <style>
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+    </style>
+{% endblock %}
