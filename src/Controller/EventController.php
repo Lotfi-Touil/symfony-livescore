@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Event;
+use App\Entity\EventParticipant;
+use App\Entity\ScoreType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -30,15 +32,22 @@ class EventController extends AbstractController
             throw $this->createNotFoundException('No event found for id '.$id);
         }
 
-        if((rand() % 2) == 1 ) {
-            $tpl = 'score';
+        if($event->getSport()->getScoreType()->getName() == ScoreType::$score_type_point) {
+            return $this->render("event/score.html.twig", [
+                'teamOne' => $event->getEventParticipants()[0],
+                'teamTwo' => $event->getEventParticipants()[1],
+            ]);
         } else {
-            $tpl = 'rank';
+            $eventParticipants = $em->getRepository(EventParticipant::class)->findAllByEventOrdered($event->getId());
+
+            return $this->render("event/rank.html.twig", [
+                'eventParticipants' => $eventParticipants,
+            ]);
         }
 
-        return $this->render("event/$tpl.html.twig", [
-            'event' => $event,
-        ]);
+        // return $this->render("event/$tpl.html.twig", [
+        //     'event' => $event,
+        // ]);
     }
 
     #[Route('/events/{id}/update', name: 'events_update', methods: ['POST'])]

@@ -2,24 +2,29 @@
 
 namespace App\Entity;
 
-use App\Repository\ParticipantRepository;
+use App\Repository\ScoreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ParticipantRepository::class)]
-class Participant
+#[ORM\Entity(repositoryClass: ScoreRepository::class)]
+class Score
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
+    private ?string $value = null;
 
-    #[ORM\OneToMany(mappedBy: 'participant', targetEntity: EventParticipant::class)]
+    #[ORM\OneToMany(mappedBy: 'score', targetEntity: EventParticipant::class)]
     private Collection $eventParticipants;
+
+    #[ORM\ManyToOne(inversedBy: 'scores')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ScoreType $scoreType = null;
 
     public function __construct()
     {
@@ -31,14 +36,14 @@ class Participant
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getValue(): ?string
     {
-        return $this->name;
+        return $this->value;
     }
 
-    public function setName(string $name): static
+    public function setValue(string $value): static
     {
-        $this->name = $name;
+        $this->value = $value;
 
         return $this;
     }
@@ -55,7 +60,7 @@ class Participant
     {
         if (!$this->eventParticipants->contains($eventParticipant)) {
             $this->eventParticipants->add($eventParticipant);
-            $eventParticipant->setParticipant($this);
+            $eventParticipant->setScore($this);
         }
 
         return $this;
@@ -65,10 +70,22 @@ class Participant
     {
         if ($this->eventParticipants->removeElement($eventParticipant)) {
             // set the owning side to null (unless already changed)
-            if ($eventParticipant->getParticipant() === $this) {
-                $eventParticipant->setParticipant(null);
+            if ($eventParticipant->getScore() === $this) {
+                $eventParticipant->setScore(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getScoreType(): ?ScoreType
+    {
+        return $this->scoreType;
+    }
+
+    public function setScoreType(?ScoreType $scoreType): static
+    {
+        $this->scoreType = $scoreType;
 
         return $this;
     }

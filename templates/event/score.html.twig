@@ -1,26 +1,72 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Event Ranking Display
+    Football Match Score Display
 {% endblock %}
 
 {% block body %}
     <div class="main-container">
-        <h1 style="text-align: center;">Live Football Ranking</h1>
-        <div class="score-container" style="text-align: center; margin-top: 50px;">
-            <div class="score" style="font-size: 5em; padding: 20px 40px;">
-                {# {{ event.score }} #}
-                PSG 4 - 1 FCB
+        <h1>Match de Football : {{ teamOne.participant.name }} vs {{ teamTwo.participant.name }}</h1>
+        <div class="scoreboard">
+            <div class="team team1">
+                <span class="team-name">{{ teamOne.participant.name }}</span>
+                <span class="team-score">{{ teamOne.score.value | round(0, 'floor') }}</span>
+            </div>
+            <div class="versus">VS</div>
+            <div class="team team2">
+                <span class="team-name">{{ teamTwo.participant.name }}</span>
+                <span class="team-score">{{ teamTwo.score.value | round(0, 'floor') }}</span>
             </div>
         </div>
     </div>
     <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1b1b1b;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
         .main-container {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             flex-direction: column;
+            background-color: #333;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+        h1 {
+            color: #feca57;
+            margin-bottom: 20px;
+        }
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #4b4b4b;
+            border-radius: 15px;
+            padding: 20px 50px;
+            width: 60%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .team {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .versus {
+            font-size: 2.5em;
+            color: #feca57;
+        }
+        .team-name {
+            display: block;
+            color: #f5f6fa;
+        }
+        .team-score {
+            font-size: 3em;
+            color: #feca57;
         }
     </style>
 {% endblock %}

@@ -6,22 +6,15 @@
 
 {% block body %}
     <div class="main-container">
-        <h1>Live F1 Ranking</h1>
+        <h1>Classement en Direct de la F1</h1>
         <div class="ranking-table">
-            <div class="ranking-row">
-                <div>[#11] Nom Prenom +temps</div>
-                <div>[#11] Nom Prenom +temps</div>
-                <div>[#11] Nom Prenom +temps</div>
-                <div>[#11] Nom Prenom +temps</div>
-                <div>[#11] Nom Prenom +temps</div>
-                <div>[#11] Nom Prenom +temps</div>
-                <div>[#11] Nom Prenom +temps</div>
-                <div>[#11] Nom Prenom +temps</div>
-                <div>[#11] Nom Prenom +temps</div>
-            </div>
-            {% for participant in event.participants %}
+            {% for index, eventParticipant in eventParticipants %}
                 <div class="ranking-row">
-                    <div class="position">[#{{ loop.index }}] {{ participant.team }} {{ participant.name }} {{ participant.lastLapTime }}</div>
+                    <div class="position">
+                        <span class="rank">#{{ index + 1 }}</span>
+                        <span class="name">{{ eventParticipant.participant.name }}</span>
+                        <span class="score">(+{{ eventParticipant.score.value }})</span>
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -33,18 +26,47 @@
             align-items: center;
             height: 100vh;
             flex-direction: column;
+            background: #1b1b1b;
+            color: #fff;
         }
         .ranking-table {
-            text-align: center;
-            width: 100%;
+            text-align: left;
+            width: 50%;
+            font-family: 'Arial', sans-serif;
         }
         .ranking-row {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            animation: fadeIn 0.5s;
         }
         .position {
-            background-color: #f2f2f2;
-            padding: 10px;
-            border-radius: 5px;
+            background-color: #323232;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid #ccc;
         }
-    </style>
+        .rank {
+            font-size: 24px;
+            font-weight: bold;
+            color: #feca57;
+        }
+        .name {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .score {
+            font-weight: bold;
+            color: #4cd137;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
 {% endblock %}

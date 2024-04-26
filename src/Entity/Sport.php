@@ -21,6 +21,10 @@ class Sport
     #[ORM\OneToMany(mappedBy: 'sport', targetEntity: Event::class)]
     private Collection $events;
 
+    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'sports')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ScoreType $scoreType = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -69,6 +73,18 @@ class Sport
                 $event->setSport(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getScoreType(): ?ScoreType
+    {
+        return $this->scoreType;
+    }
+
+    public function setScoreType(?ScoreType $scoreType): static
+    {
+        $this->scoreType = $scoreType;
 
         return $this;
     }

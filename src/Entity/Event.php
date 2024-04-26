@@ -19,16 +19,19 @@ class Event
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateStart = null;
 
-    #[ORM\ManyToOne(inversedBy: 'events')]
+    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'events')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Sport $sport = null;
 
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Participant::class)]
-    private Collection $participants;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateEnd = null;
+
+    #[ORM\OneToMany(fetch: 'EAGER', mappedBy: 'event', targetEntity: EventParticipant::class)]
+    private Collection $eventParticipants;
 
     public function __construct()
     {
-        $this->participants = new ArrayCollection();
+        $this->eventParticipants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -60,30 +63,42 @@ class Event
         return $this;
     }
 
-    /**
-     * @return Collection<int, Participant>
-     */
-    public function getParticipants(): Collection
+    public function getDateEnd(): ?\DateTimeInterface
     {
-        return $this->participants;
+        return $this->dateEnd;
     }
 
-    public function addParticipant(Participant $participant): static
+    public function setDateEnd(\DateTimeInterface $dateEnd): static
     {
-        if (!$this->participants->contains($participant)) {
-            $this->participants->add($participant);
-            $participant->setEvent($this);
+        $this->dateEnd = $dateEnd;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EventParticipant>
+     */
+    public function getEventParticipants(): Collection
+    {
+        return $this->eventParticipants;
+    }
+
+    public function addEventParticipant(EventParticipant $eventParticipant): static
+    {
+        if (!$this->eventParticipants->contains($eventParticipant)) {
+            $this->eventParticipants->add($eventParticipant);
+            $eventParticipant->setEvent($this);
         }
 
         return $this;
     }
 
-    public function removeParticipant(Participant $participant): static
+    public function removeEventParticipant(EventParticipant $eventParticipant): static
     {
-        if ($this->participants->removeElement($participant)) {
+        if ($this->eventParticipants->removeElement($eventParticipant)) {
             // set the owning side to null (unless already changed)
-            if ($participant->getEvent() === $this) {
-                $participant->setEvent(null);
+            if ($eventParticipant->getEvent() === $this) {
+                $eventParticipant->setEvent(null);
             }
         }
 
