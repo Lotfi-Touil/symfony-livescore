@@ -9,6 +9,7 @@ use App\Entity\Event;
 use App\Entity\EventParticipant;
 use App\Entity\ScoreType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class EventController extends AbstractController
@@ -20,6 +21,23 @@ class EventController extends AbstractController
         return $this->render('event/index.html.twig', [
             'events' => $events,
         ]);
+    }
+
+    #[Route('/events/today', name: 'events_today', methods: ['GET'])]
+    public function todayEvents(EntityManagerInterface $em): JsonResponse
+    {
+        $events = $em->getRepository(Event::class)->findAllToday();
+
+        $eventsArray = array_map(function ($event) {
+            return [
+                'event_id' => $event['event_id'],
+                'event' => $event['sport_name'],
+                'area_name' => $event['area_name'],
+                'roomUrl' => "{$event['sport_name']}#sport={$event['sport_name']}",
+            ];
+        }, $events);
+
+        return new JsonResponse($eventsArray);
     }
 
     #[Route('/events/streaming/{id}', name: 'events_streaming', methods: ['GET'])]

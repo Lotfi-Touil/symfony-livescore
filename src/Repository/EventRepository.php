@@ -21,6 +21,25 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
+    public function findAllToday(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->join('e.sport', 's')
+            ->select(
+                'e.id AS event_id',
+                's.name AS sport_name',
+                'CONCAT(s.name, \'#\', e.id) AS area_name'
+            )
+            ->where('e.dateStart >= :start')
+            ->andWhere('e.dateEnd <= :end')
+            ->setParameter('start', new \DateTime('today midnight'))
+            ->setParameter('end', new \DateTime('tomorrow midnight'))
+            ->orderBy('e.dateStart', 'ASC')
+            ->getQuery()
+            ->getArrayResult()
+        ;
+    }
+
 //    /**
 //     * @return Event[] Returns an array of Event objects
 //     */
