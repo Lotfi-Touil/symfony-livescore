@@ -11,8 +11,6 @@ use App\Entity\ScoreType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-// TODO Lotfi : maybe qu'au lieu d'avoir des crons, on aurait juste des call ajax en settimeout donc en boucle avec du jquery et on mettrait a jouraleatoirement toutes les 2 minutes .Par contre on aura pas de cron tout les jours a minuit pour générer le planing, on va le faker
-
 class EventController extends AbstractController
 {
     #[Route('/events', name: 'events_index', methods: ['GET'])]
@@ -21,6 +19,25 @@ class EventController extends AbstractController
         $events = $em->getRepository(Event::class)->findAll();
         return $this->render('event/index.html.twig', [
             'events' => $events,
+        ]);
+    }
+
+    #[Route('/events/streaming/{id}', name: 'events_streaming', methods: ['GET'])]
+    public function streaming(int $id, EntityManagerInterface $em): Response
+    {
+        $event = $em->getRepository(Event::class)->find($id);
+        if (!$event) {
+            throw $this->createNotFoundException('No event found for id '.$id);
+        }
+
+        if($event->getSport()->getScoreType()->getName() == ScoreType::$score_type_point) {
+            $videoId = "wzkzCdaYEss";
+        } else {
+            $videoId = "cQWcVHdIHgA";
+        }
+
+        return $this->render("event/streaming.html.twig", [
+            'videoId' => $videoId,
         ]);
     }
 
