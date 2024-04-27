@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="main-container">
+    <div id="main-container">
         <h1>Match de Football : {{ teamOne.participant.name }} vs {{ teamTwo.participant.name }}</h1>
         <div class="scoreboard">
             <div class="team team1">
@@ -19,6 +19,26 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            function fetchData() {
+                $.ajax({
+                    url: '{{ path('events_update', {'id' : eventId }) }}',
+                    type: 'GET',
+                    success: function(data) {
+                        $('#main-container').html(data);
+                    },
+                    error: function(error) {
+                        console.log("Erreur lors de la récupération des données: ", error);
+                    }
+                });
+            }
+
+            setInterval(fetchData, 3000); // 3s pour test
+            // toutes les 5 minutes
+            // setInterval(fetchData, 60000 * 5);
+        });
+    </script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -27,7 +47,7 @@
             margin: 0;
             padding: 0;
         }
-        .main-container {
+        #main-container {
             display: flex;
             justify-content: center;
             align-items: center;

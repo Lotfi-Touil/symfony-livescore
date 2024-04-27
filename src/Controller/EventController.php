@@ -8,6 +8,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Event;
 use App\Entity\EventParticipant;
 use App\Entity\ScoreType;
+use App\Service\LivescoreService;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +51,7 @@ class EventController extends AbstractController
         }
 
         if($event->getSport()->getScoreType()->getName() == ScoreType::$score_type_point) {
-            $videoId = "wzkzCdaYEss";
+            $videoId = "pVIAx16odCs";
         } else {
             $videoId = "cQWcVHdIHgA";
         }
@@ -69,6 +71,7 @@ class EventController extends AbstractController
 
         if($event->getSport()->getScoreType()->getName() == ScoreType::$score_type_point) {
             return $this->render("event/score.html.twig", [
+                'eventId' => $event->getId(),
                 'teamOne' => $event->getEventParticipants()[0],
                 'teamTwo' => $event->getEventParticipants()[1],
             ]);
@@ -76,29 +79,39 @@ class EventController extends AbstractController
             $eventParticipants = $em->getRepository(EventParticipant::class)->findAllByEventOrdered($event->getId());
 
             return $this->render("event/rank.html.twig", [
+                'eventId' => $event->getId(),
                 'eventParticipants' => $eventParticipants,
             ]);
         }
-
-        // return $this->render("event/$tpl.html.twig", [
-        //     'event' => $event,
-        // ]);
     }
 
-    #[Route('/events/{id}/update', name: 'events_update', methods: ['POST'])]
-    public function update(int $id, EntityManagerInterface $em, Request $request): Response
+    #[Route('/events/{id}/update', name: 'events_update', methods: ['GET'])]
+    public function update(int $id, EntityManagerInterface $em, LivescoreService $LS): Response
     {
         $event = $em->getRepository(Event::class)->find($id);
         if (!$event) {
             throw $this->createNotFoundException('No event found for id '.$id);
         }
 
-        // Ici, tu peux ajouter la logique de mise à jour de l'événement
-        // Par exemple, mise à jour de la date de début pour la simulation
-        $event->setDateStart(new \DateTime()); // Juste un exemple de mise à jour
+        $now = new DateTime();
+        if ($event->getDateStart() && $event->getDateEnd()) {
+            if ($now >= $event->getDateStart() && $now <= $event->getDateEnd()) {
+                $LS->randomizeScore($event);
+            }
+        }
 
-        $em->flush();
+        if($event->getSport()->getScoreType()->getName() == ScoreType::$score_type_point) {
+            return $this->render("_components/score-skeleton.html.twig", [
+                'teamOne' => $event->getEventParticipants()[0],
+                'teamTwo' => $event->getEventParticipants()[1],
+            ]);
+        } else {
+            $eventParticipants = $em->getRepository(EventParticipant::class)->findAllByEventOrdered($event->getId());
 
-        return $this->redirectToRoute('events_show', ['id' => $id]);
+            $eventParticipants = $em->getRepository(EventParticipant::class)->findAllByEventOrdered($event->getId());
+            return $this->render('_components/rank-skeleton.html.twig', [
+                'eventParticipants' => $eventParticipants,
+            ]);
+        }
     }
 }

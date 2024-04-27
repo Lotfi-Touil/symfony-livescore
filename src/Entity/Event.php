@@ -23,7 +23,7 @@ class Event
     #[ORM\JoinColumn(nullable: false)]
     private ?Sport $sport = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateEnd = null;
 
     #[ORM\OneToMany(fetch: 'EAGER', mappedBy: 'event', targetEntity: EventParticipant::class)]
@@ -33,6 +33,7 @@ class Event
     {
         $this->eventParticipants = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {

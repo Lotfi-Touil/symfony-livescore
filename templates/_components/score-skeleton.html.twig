@@ -1,0 +1,12 @@
+<h1>Match de Football : {{ teamOne.participant.name }} vs {{ teamTwo.participant.name }}</h1>
+<div class="scoreboard">
+    <div class="team team1">
+        <span class="team-name">{{ teamOne.participant.name }}</span>
+        <span class="team-score">{{ teamOne.score.value | round(0, 'floor') }}</span>
+    </div>
+    <div class="versus">VS</div>
+    <div class="team team2">
+        <span class="team-name">{{ teamTwo.participant.name }}</span>
+        <span class="team-score">{{ teamTwo.score.value | round(0, 'floor') }}</span>
+    </div>
+</div>

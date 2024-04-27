@@ -31,9 +31,9 @@ class EventRepository extends ServiceEntityRepository
                 'CONCAT(s.name, \'#\', e.id) AS area_name'
             )
             ->where('e.dateStart >= :start')
-            ->andWhere('e.dateEnd <= :end')
+            ->andWhere('e.dateStart <= :end')
             ->setParameter('start', new \DateTime('today midnight'))
-            ->setParameter('end', new \DateTime('tomorrow midnight'))
+            ->setParameter('end', new \DateTime('today 23:59:59'))
             ->orderBy('e.dateStart', 'ASC')
             ->getQuery()
             ->getArrayResult()

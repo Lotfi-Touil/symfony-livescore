@@ -1,0 +1,9 @@
+{% for index, eventParticipant in eventParticipants %}
+    <div class="ranking-row">
+        <div class="position">
+            <span class="rank">#{{ index + 1 }}</span>
+            <span class="name">{{ eventParticipant.participant.name }}</span>
+            <span class="score">(+{{ eventParticipant.score.value|number_format(2, '.', ',') }})</span>
+        </div>
+    </div>
+{% endfor %}

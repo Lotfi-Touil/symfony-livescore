@@ -7,18 +7,38 @@
 {% block body %}
     <div class="main-container">
         <h1>Classement en Direct de la F1</h1>
-        <div class="ranking-table">
+        <div id="ranking-table">
             {% for index, eventParticipant in eventParticipants %}
                 <div class="ranking-row">
                     <div class="position">
                         <span class="rank">#{{ index + 1 }}</span>
                         <span class="name">{{ eventParticipant.participant.name }}</span>
-                        <span class="score">(+{{ eventParticipant.score.value }})</span>
+                        <span class="score">(+{{ eventParticipant.score.value|number_format(2, '.', ',') }})</span>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            function fetchData() {
+                $.ajax({
+                    url: '{{ path('events_update', {'id' : eventId }) }}',
+                    type: 'GET',
+                    success: function(data) {
+                        $('#ranking-table').html(data);
+                    },
+                    error: function(error) {
+                        console.log("Erreur lors de la récupération des données: ", error);
+                    }
+                });
+            }
+
+            setInterval(fetchData, 3000); // 3s pour test
+            // toutes les 30 secondes
+            // setInterval(fetchData, 30000);
+        });
+    </script>
     <style>
         .main-container {
             display: flex;
@@ -29,7 +49,7 @@
             background: #1b1b1b;
             color: #fff;
         }
-        .ranking-table {
+        #ranking-table {
             text-align: left;
             width: 50%;
             font-family: 'Arial', sans-serif;
@@ -69,4 +89,5 @@
             height: 100%;
             overflow: hidden;
         }
+    </style>
 {% endblock %}
